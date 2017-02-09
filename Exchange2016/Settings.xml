@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+
+<Settings>
+	<!-- General Azure connection settings -->
+	<Azure>
+		<SubscriptionId>ebdc04d8-96c5-4add-8533-e0891693691b</SubscriptionId>
+		<TenantId>0bd630d6-a335-4fe9-8498-98709da140e9</TenantId>
+	</Azure>
+	<!-- Lab definitions -->
+	<Labs>
+		<Lab Name="Exchange Base Lab">
+			<Administrator>
+				<Username>LabAdministrator</Username>
+				<Password>BasePassw0rd!</Password>
+			</Administrator>
+			<ResourceGroup>
+				<Name>RGEXLAB</Name>
+				<!-- Get-AzureRmLocation | Where { $_.Displayname –match 'Europe' } | Format-Table DisplayName,Location-->
+				<!-- DisplayName -->
+				<Location>West Europe</Location>
+				<!-- Location, all lower case, no spaces -->
+				<LocationShort>westeurope</LocationShort>
+				<!-- all lower case, no spaces -->
+				<StorageAccountName>saexlab</StorageAccountName>
+				<!-- Standard_LRS, Standard_GRS, Standard_RAGRS, Standard_ZRS, Premium_LRS -->
+				<StorageType>Standard_LRS</StorageType>
+			</ResourceGroup>
+			<VirtualNetwork>
+				<!-- The resource groups virtual network -->
+				<Name>EX2016VNet</Name>
+				<AddressPrefix>10.0.0.0/16</AddressPrefix>
+				<DNS>10.0.0.4</DNS>
+				<!-- The target single subnet for all virtual machines, the subnet is part of the virtual network -->
+				<SubnetConfig>EX2016Subnet</SubnetConfig>
+				<SubnetAddress>10.0.0.0/24</SubnetAddress>
+				<SecurityRules>
+					<Rule Name="RDPTraffic">
+						<Description>Allow RDP to all VMs on the subnet</Description>
+						<Access>Allow</Access>
+						<Protocol>TCP</Protocol>
+						<Direction>Inbound</Direction>
+						<Priority>100</Priority>
+						<SourceAddressPrefix>Internet</SourceAddressPrefix>
+						<SourcePortRange>*</SourcePortRange>
+						<!-- RDP to any IP address within the subnet -->
+						<DestinationAddressPrefix>*</DestinationAddressPrefix>
+						<DestinationPortRange>3389</DestinationPortRange>
+					</Rule>	
+					<Rule Name="WinRM_HTTPS">
+						<Description>Allow WinRM to all VMs on the subnet</Description>
+						<Access>Allow</Access>
+						<Protocol>TCP</Protocol>
+						<Direction>Inbound</Direction>
+						<Priority>1000</Priority>
+						<SourceAddressPrefix>Internet</SourceAddressPrefix>
+						<!-- Currently not limited to a dedicated source IP -->
+						<SourcePortRange>*</SourcePortRange>
+						<!-- Remote PowerShell HTTPS to any IP address within the subnet -->
+						<DestinationAddressPrefix>*</DestinationAddressPrefix>
+						<DestinationPortRange>5986</DestinationPortRange>
+					</Rule>	
+					<Rule Name="ExchangeHTTPsTraffic">
+						<Description>Allow HTTPS to the Exchange server</Description>
+						<Access>Allow</Access>
+						<Protocol>TCP</Protocol>
+						<Direction>Inbound</Direction>
+						<Priority>101</Priority>
+						<SourceAddressPrefix>Internet</SourceAddressPrefix>
+						<SourcePortRange>*</SourcePortRange>
+						<!-- HTTPS to Exchange Server with address 10.0.0.5 only -->
+						<DestinationAddressPrefix>10.0.0.5/32</DestinationAddressPrefix>
+						<DestinationPortRange>443</DestinationPortRange>
+					</Rule>						
+				</SecurityRules>
+			</VirtualNetwork>
+			<Domain>mcsmlab.de</Domain>
+			<Servers>
+				<Server Name="DC01">
+					<AvailabilitySetName>asDC01</AvailabilitySetName>
+					<PrivateIpAddress>10.0.0.4</PrivateIpAddress>
+					<!-- Standard_D1_v2 -->
+					<VmSize>STANDARD_A1</VmSize>
+					<DiskSizeInGB>20</DiskSizeInGB>
+				</Server>
+				<!--
+				<Server Name="EX01">
+					<AvailabilitySetName>asEX01</AvailabilitySetName>
+					<PrivateIpAddress>10.0.0.5</PrivateIpAddress>
+					<VmSize>Standard_D1_v2</VmSize>
+					<DiskSizeInGB>20</DiskSizeInGB>
+				</Server>
+				-->
+			</Servers>
+		</Lab>		
+		<Lab Name="My second Lab">
+			<Domain>mcsmlab2.de</Domain>
+		</Lab>	
+	</Labs>
+</Settings>
