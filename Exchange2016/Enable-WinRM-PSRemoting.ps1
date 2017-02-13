@@ -36,25 +36,23 @@
     1.0      Initial release 
    
  #>
-$VmName = Hostname
+$VmName = $env:computername
 
 #Firewall Rule on Azure VM
 New-NetFirewallRule -DisplayName "WinRM_HTTPS" -Direction Inbound -Action Allow -Protocol TCP -Profile Any -LocalPort 5986
 
 #Create Certificate
-New-SelfSignedCertificate -DnsName $VMName -CertStoreLocation cert:\LocalMachine\My
+$thumbprint = (New-SelfSignedCertificate -DnsName $VmName -CertStoreLocation Cert:\LocalMachine\My).Thumbprint
 
-#Get Certificate Thumbprint
-$CertThumb = Get-ChildItem -Path "cert:/LocalMachine/my"
-$CertThumb = $CertThumb.Thumbprint
-
-#Enbale WinRM on Port 5986 for HTTPS
-winrm create winrm/config/Listener?Address=*+Transport=HTTPS '@{Hostname="$VmName"; CertificateThumbprint="$CertThumb"}'
+#Enbale WinRM on Port 5986 for HTTPs
+$cmd = "winrm create winrm/config/Listener?Address=*+Transport=HTTPS @{Hostname="$VmName"; CertificateThumbprint="$thumbprint"}" cmd.exe /C $cmd
 
 #Password to Secure String
-#$pw = convertto-securestring -AsPlainText -Force -String <password>
+#$pw = convertto-securestring -AsPlainText -Force -String S2402v88#2017
 #$cred = new-object -typename System.Management.Automation.PSCredential -argumentlist "adm.sv",$pw
 
 #PSSession aufbauen
 #$sessionOptions = New-PSSessionOption -SkipCACheck -SkipCNCheck
-#Enter-PSSession -ComputerName 52.174.23.106 -Credential $cred -UseSSL -SessionOption $sessionOptions
+#Enter-PSSession -ComputerName 52.166.4.152 -Port 5986 -Credential $cred -UseSSL -SessionOption $sessionOptions
+
+#Set-AzureRmVMCustomScriptExtension -ResourceGroupName $rgname -VMName $vmname -Name "EnableWinRM_HTTPS" -Location $vm.Location -StorageAccountName $storageaccountname -StorageAccountKey $key -FileName "ConfigureWinRM_HTTPS.ps1" -ContainerName "scripts"
