@@ -14,7 +14,7 @@
 				<Password>BasePassw0rd!</Password>
 			</Administrator>
 			<ResourceGroup>
-				<Name>RGEXLAB</Name>
+				<Name>LAB01</Name>
 				<!-- Get-AzureRmLocation | Where { $_.Displayname –match 'Europe' } | Format-Table DisplayName,Location-->
 				<!-- DisplayName -->
 				<Location>West Europe</Location>
@@ -76,21 +76,36 @@
 			<Domain>mcsmlab.de</Domain>
 			<Servers>
 				<Server Name="DC01">
-					<AvailabilitySetName>asDC01</AvailabilitySetName>
+					<AvailabilitySetName>DC01</AvailabilitySetName>
 					<PrivateIpAddress>10.0.0.4</PrivateIpAddress>
-					<!-- Standard_D1_v2 -->
 					<VmSize>STANDARD_A1</VmSize>
 					<DiskSizeInGB>20</DiskSizeInGB>
 				</Server>
-				<!--
-				<Server Name="EX01">
-					<AvailabilitySetName>asEX01</AvailabilitySetName>
+				<!-- <Server Name="EX01">
+					<AvailabilitySetName>EX01</AvailabilitySetName>
 					<PrivateIpAddress>10.0.0.5</PrivateIpAddress>
 					<VmSize>Standard_D1_v2</VmSize>
 					<DiskSizeInGB>20</DiskSizeInGB>
 				</Server>
-				-->
+                -->
 			</Servers>
+            <ActiveDirectory>
+                <Domain Name="TestLab1">
+                    <!-- Domain name setting -->
+                    <DomainName>testlab.de</DomainName>
+                    <DomainNetBIOS>testlab</DomainNetBIOS>
+                    <!-- Fores and domain level settings-->
+                    <ForestMode>Win2016</ForestMode>
+                    <DomainMode>Win2012R2</DomainMode>
+                    <!-- DNS settings -->
+                    <CreateDNSDelegation>$True</CreateDNSDelegation>
+                    <InstallDNS>$True</InstallDNS>
+                    <!-- Active Directory path settings-->
+                    <DatabasePath>C:\Windows\NTDS</DatabasePath>
+                    <SysvolPath>C:\Windows\SYSVOL</Sysvolpath>
+                    <LogPath>C:\Windows\NTDS</LogPath>
+                </Domain>
+            </ActiveDirectory>
 		</Lab>		
 		<Lab Name="My second Lab">
 			<Domain>mcsmlab2.de</Domain>
